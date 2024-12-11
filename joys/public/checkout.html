@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Joys - Checkout</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <style>
+    /* Styling untuk halaman Checkout */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .logo {
+      color: #D4AF37;
+      font-size: 80px;
+      font-family: 'UnifrakturMaguntia', serif;
+      cursor: pointer;
+      transition: transform 0.5s ease-in-out;
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      transform: scale(1.5);
+    }
+
+    .checkout-section {
+      color: white;
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .checkout-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input, select {
+      padding: 10px;
+      margin: 10px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 80%;
+    }
+
+    .cart-item {
+      background-color: #111;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+
+    .total-price {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .submit-btn {
+      background-color: #D4AF37;
+      padding: 10px 20px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+      background-color: #333;
+      color: white;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="logo">𝕵𝖔𝖞𝖘</a>
+
+  <section class="checkout-section">
+    <h2>Checkout</h2>
+    
+    <div id="checkout-items"></div>
+    <div class="total-price" id="total-price">Total: IDR 0</div>
+    
+    <form class="checkout-form" id="checkout-form">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="text" id="address" placeholder="Shipping Address" required>
+      <select id="payment-method" required>
+        <option value="" disabled selected>Choose Payment Method</option>
+        <option value="Credit Card">Credit Card</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+      </select>
+      <button type="submit" class="submit-btn">Confirm Order</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 Joys - All Rights Reserved</p>
+  </footer>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const checkoutItems = document.getElementById('checkout-items');
+    const totalPriceElement = document.getElementById('total-price');
+    const checkoutForm = document.getElementById('checkout-form');
+    
+    // Function to render the cart items for checkout
+    function renderCheckoutItems() {
+      if (cart.length === 0) {
+        checkoutItems.innerHTML = '<p>Your cart is empty.</p>';
+        totalPriceElement.innerHTML = 'Total: IDR 0';
+        return;
+      }
+
+      let total = 0;
+      let checkoutHtml = '';
+
+      cart.forEach(item => {
+        const itemTotal = parseInt(item.price.replace(/IDR /, '').replace(/,/g, '')) * item.quantity;
+        total += itemTotal;
+
+        checkoutHtml += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" width="100">
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p>Qty: ${item.quantity}</p>
+            <p>Price: ${item.price}</p>
+            <p>Total: IDR ${itemTotal}</p>
+          </div>
+        `;
+      });
+
+      checkoutItems.innerHTML = checkoutHtml;
+      totalPriceElement.innerHTML = `Total: IDR ${total.toLocaleString()}`;
+    }
+
+    // Handle the checkout form submission
+    checkoutForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const address = document.getElementById('address').value;
+      const paymentMethod = document.getElementById('payment-method').value;
+
+      if (!name || !email || !address || !paymentMethod) {
+        alert('Please fill in all the fields.');
+        return;
+      }
+
+      // Simulate a successful order
+      alert('Your order has been successfully placed!\nThank you for shopping with us.');
+      
+      // Clear the cart
+      localStorage.removeItem('cart');
+      window.location.href = 'index.html';  // Redirect to the home page
+    });
+
+    renderCheckoutItems();
+  </script>
+
+</body>
+</html>

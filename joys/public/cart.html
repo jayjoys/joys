@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Joys - Cart</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+  <style>
+    /* Styling untuk halaman Cart */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000;
+      display: flex;
+      align-items: center; /* Center vertically */
+      justify-content: center; /* Center horizontally */
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .logo {
+      color: #D4AF37;
+      font-size: 80px;
+      font-family: 'UnifrakturMaguntia', serif;
+      cursor: pointer;
+      transition: transform 0.5s ease-in-out;
+      text-decoration: none;
+    }
+
+    .logo:hover {
+      transform: scale(1.5);
+    }
+
+    .cart-section {
+      color: white;
+      width: 100%;
+      max-width: 800px; /* Maksimal lebar untuk section */
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center the content horizontally */
+      justify-content: center; /* Center vertically within the section */
+    }
+
+    .cart-empty-message {
+      color: white;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .product {
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 20px;
+      color: white;
+      text-align: center;
+    }
+
+    .product img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+
+    .price {
+      color: #D4AF37;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    .quantity {
+      margin-top: 10px;
+    }
+
+    .quantity input {
+      width: 50px;
+      text-align: center;
+      font-size: 16px;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .cart-total {
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    .checkout-button {
+      padding: 10px 20px;
+      background-color: #D4AF37;
+      border: none;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    .checkout-button:hover {
+      background-color: #333;
+      color: white;
+    }
+
+    .shop-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #D4AF37;
+      color: black;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
+    .shop-link:hover {
+      background-color: #333;
+      color: white;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logo -->
+  <a href="index.html" class="logo">𝕵𝖔𝖞𝖘</a>
+
+  <!-- Cart Section -->
+  <section class="cart-section">
+    <div id="cart-items-container"></div>
+    <div id="cart-empty-message" class="cart-empty-message" style="display:none;">
+      <p>Your cart is currently empty.</p>
+    </div>
+    <p class="cart-total" id="cart-total">Total: IDR 0</p>
+    <a href="shop.html" class="shop-link">Go to Shop</a> <!-- Shop Link as a button -->
+    <button class="checkout-button" id="checkout-button" style="display: none;">Proceed to Checkout</button>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 Joys - All Rights Reserved</p>
+  </footer>
+
+  <script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const cartTotalElement = document.getElementById('cart-total');
+    const cartEmptyMessage = document.getElementById('cart-empty-message');
+    const checkoutButton = document.getElementById('checkout-button');
+
+    // Function to render cart items
+    function renderCartItems() {
+      if (cart.length === 0) {
+        cartEmptyMessage.style.display = 'block';
+        cartItemsContainer.innerHTML = '';
+        cartTotalElement.innerHTML = 'Total: IDR 0';
+        checkoutButton.style.display = 'none';
+        return;
+      }
+
+      cartEmptyMessage.style.display = 'none';
+      checkoutButton.style.display = 'inline-block';
+
+      let total = 0;
+      let cartHtml = '';
+
+      cart.forEach(item => {
+        const itemTotal = parseInt(item.price.replace(/IDR /, '').replace(/,/g, '')) * item.quantity;
+        total += itemTotal;
+
+        cartHtml += `
+          <div class="product">
+            <img src="${item.image}" alt="${item.name}">
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p class="price">${item.price}</p>
+            <div class="quantity">
+              <label for="quantity-${item.id}">Qty:</label>
+              <input type="number" id="quantity-${item.id}" class="quantity-input" data-id="${item.id}" value="${item.quantity}" min="1">
+            </div>
+            <p>Total: IDR ${itemTotal}</p>
+          </div>
+        `;
+      });
+
+      cartItemsContainer.innerHTML = cartHtml;
+      cartTotalElement.innerHTML = `Total: IDR ${total.toLocaleString()}`;
+    }
+
+    // Proceed to Checkout (currently a placeholder)
+    function proceedToCheckout() {
+      alert('Proceeding to checkout!');
+      // You can redirect to a checkout page or show a summary
+    }
+
+    checkoutButton.addEventListener('click', proceedToCheckout);
+
+    renderCartItems();
+  </script>
+
+</body>
+</html>
